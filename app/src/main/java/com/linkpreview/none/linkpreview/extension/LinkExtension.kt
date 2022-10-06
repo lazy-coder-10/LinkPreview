@@ -19,7 +19,6 @@ import java.net.URI
 @Suppress("BlockingMethodInNonBlockingContext")
 suspend fun LinkPreview.loadPreviewData(
     link: String,
-    key: Int,
     listener: LinkListener?
 ) = withContext(Dispatchers.Default) {
     try {
@@ -46,16 +45,13 @@ suspend fun LinkPreview.loadPreviewData(
 
                 PreviewData(siteName,doc.title(), chosen ?: "", link)
             } else {
-                launch(Dispatchers.Main) { listener?.onError() }
                 PreviewData("","", "", "")
             }
         } catch (e: IndexOutOfBoundsException) {
             e.printStackTrace()
-            launch(Dispatchers.Main) { listener?.onError() }
             PreviewData("","", "", "")
         } catch (e: Exception) {
             e.printStackTrace()
-            launch(Dispatchers.Main) { listener?.onError() }
             PreviewData("","", "", "")
         }
 
@@ -89,69 +85,6 @@ fun Context.launchUrlWithCustomTab(uri: Uri) {
         val browserIntent = Intent(Intent.ACTION_VIEW,uri)
         startActivity(browserIntent)
     }catch (e : Exception){
-        e.printStackTrace()
-    }
-}
-
-@Suppress("BlockingMethodInNonBlockingContext")
-suspend fun loadPreviewData(
-    link: String,
-    listener: LinkListener?
-) = withContext(Dispatchers.Default) {
-    try {
-        val result = try {
-            val connection = Jsoup.connect(link).referrer("http://www.google.com")
-
-            val doc: Document = connection.get()
-            val imageElements = doc.select("meta[property=og:image]")
-
-            //Get description from document object.
-            val dataLink : Element? = doc.select("a").first()
-
-            val siteName: String = getHostName(link).toString()
-
-
-            if (imageElements.size > 0) {
-                var it = 0
-                var chosen: String? = ""
-
-                while ((chosen == null || chosen.isEmpty()) && it < imageElements.size) {
-                    chosen = imageElements[it].attr("content")
-                    it += 1
-                }
-
-                PreviewData(siteName,doc.title(), chosen ?: "", link)
-            } else {
-                launch(Dispatchers.Main) { listener?.onError() }
-                PreviewData("","", "", "")
-            }
-        } catch (e: IndexOutOfBoundsException) {
-            e.printStackTrace()
-            launch(Dispatchers.Main) { listener?.onError() }
-            PreviewData("","", "", "")
-        } catch (e: Exception) {
-            e.printStackTrace()
-            launch(Dispatchers.Main) { listener?.onError() }
-            PreviewData("","", "", "")
-        }
-
-        launch(Dispatchers.Main) {
-            try {
-                if (result.isNotEmpty()) {
-                    listener?.onSuccess(result)
-                } else {
-                    listener?.onError()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                listener?.onError()
-            } catch (e: IllegalArgumentException) {
-                e.printStackTrace()
-                listener?.onError()
-            }
-        }
-    } catch (e: Exception) {
-        listener?.onError()
         e.printStackTrace()
     }
 }
