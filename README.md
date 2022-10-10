@@ -3,6 +3,12 @@
 An Android Project with demo application, to fetch meta-data from url, like facebook, youtube and other websites.
 
 # ScreenShot
+<table style="width:100%">
+  <tr>
+    <td><img src="https://github.com/lazy-coder-10/LinkPreview/blob/main/screenshots/image_1.png" width="300" alt="ScreenShot"></td> 
+    <td><img src="https://github.com/lazy-coder-10/LinkPreview/blob/main/screenshots/image_2.png" width="300" alt="ScreenShot"></td>
+  </tr>
+</table>
 
 
 # Usage
